@@ -1,0 +1,121 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>{% block title %}{{current_site.domain}}{% endblock %}</title>
+
+        {% if not debug %}
+        <!-- <script defer data-domain="poastpro.com" data-api="https://odd-lab-9bf1.c-ingrm744.workers.dev/plaus/event" src="https://odd-lab-9bf1.c-ingrm744.workers.dev/plaus/script.outbound-links.js"></script> -->
+        {% endif %}
+
+        <!-- Required meta tags always come first -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="mobile-web-app-capable" content="yes">
+        <!-- <link rel="shortcut icon" sizes="48x48" href="{% static '/images/favicons/favicon.ico' %}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static '/images/favicons/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static '/images/favicons/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static '/images/favicons/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static '/images/favicons/site.webmanifest' %}">
+        <link rel="mask-icon" href="{% static '/images/favicons/safari-pinned-tab.svg' %}">
+        <meta name="msapplication-TileColor" content="#da532c"> -->
+
+        <meta name="keywords" content=""/>
+
+        {% block description %}
+            <meta name="description" content="">
+        {% endblock %}
+
+        {% block SEO %}
+            <meta property="og:title" content="{{current_site.domain}}">
+            <meta property="og:type" content="website">
+            <meta property="og:url" content="https://{{current_site.domain}}">
+            <!-- <meta property="og:image" content="{% static '/images/logo-1.png' %}">
+            <meta property="og:logo" content="{% static '/images/logo-1.png' %}"/> -->
+            <!-- <meta property="og:image:width" content="5472">
+            <meta property="og:image:height" content="1063"> -->
+            <!-- <meta property="og:image:secure_url" content="https://{{current_site.domain}}{% static '/images/logo-1.png' %}"> -->
+            <!-- <meta property="og:site_name" content="{{current_site.domain}}">
+            <meta property="og:description" content="The meme search engine. Easily find high resolution memes and meme templates.">
+            <meta name="twitter:card" content="summary_large_image">
+            <meta name="twitter:site" content="@keuxdi">
+            <meta name="twitter:domain" content="{{current_site.domain}}">
+            <meta name="twitter:title" content="The meme search engine.">
+            <meta name="twitter:description" content="Find high resolution memes and meme templates."> 
+            <meta name="twitter:image" content="{% static '/images/logo-1.png' %}"> -->
+            <link rel="canonical" href="https://{{current_site.domain}}">
+        {% endblock %}
+
+        {% if debug %}
+        <script src="https://cdn.tailwindcss.com"></script>        
+        {% endif %}
+
+        <!-- Font Awesome -->
+        <script defer src="https://kit.fontawesome.com/e03c3f9a68.js" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}?v=10082023">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/output.css' %}?v=7112024">
+
+        {% block head_content %}{% endblock %}
+
+    </head>
+    {% csrf_token %}
+    {% block pre_body %}{% endblock %}
+    <body>
+
+        {% block header %}
+        {% endblock %}
+    
+        {% block body_content %}{% endblock %}
+
+        {% block footer_content %}
+        {% endblock %}
+
+        <!-- Axios -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+        
+        <!-- Vue JS -->
+        {% if debug %}
+            <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        {% else %}
+            <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+        {% endif %}
+
+        {% block pre_javascript %}{% endblock %}
+
+        <script>
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = window.location.search.substring(1),
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
+
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                    }
+                }
+            };
+        </script>
+
+        {% block javascript %}{% endblock %}
+    </body>
+</html>
