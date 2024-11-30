@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, LLMProvider, LLMModel, TestRun
+from .models import Profile, LLMProvider, LLMModel, TestRun, TestResult
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -15,14 +15,22 @@ class LLMProviderAdmin(admin.ModelAdmin):
 
 @admin.register(LLMModel)
 class LLMModelAdmin(admin.ModelAdmin):
-    list_display = ('provider', 'model_name', 'is_active', 'date_created', 'date_modified')
+    list_display = ('provider', 'model_name', 'is_active', 'capabilities', 'date_created', 'date_modified')
     readonly_fields = ('date_created', 'date_modified')
-    list_filter = ('provider', 'is_active')
+    list_filter = ('provider', 'is_active', 'capabilities')
     search_fields = ('provider__name', 'model_name')
 
 @admin.register(TestRun)
 class TestRunAdmin(admin.ModelAdmin):
-    list_display = ('id', 'profile', 'domain_or_product', 'status', 'total_tests', 'completed_tests', 'date_created')
+    list_display = ('id', 'profile', 'product', 'status', 'total_tests', 'completed_tests', 'date_created')
     readonly_fields = ('date_created', 'date_modified')
-    list_filter = ('status',)
-    search_fields = ('id', 'domain_or_product', 'profile__user__username')
+    list_filter = ('status', 'product_category')
+    search_fields = ('id', 'product', 'profile__user__username', 'product_category', 'product_description')
+
+@admin.register(TestResult)
+class TestResultAdmin(admin.ModelAdmin):
+    list_display = ('id', 'test_run', 'llm_model', 'test_name', 'success', 'date_created')
+    readonly_fields = ('date_created',)
+    list_filter = ('success', 'test_name', 'llm_model')
+    search_fields = ('id', 'test_run__id', 'test_name', 'llm_model__model_name', 'error', 'readable_response')
+

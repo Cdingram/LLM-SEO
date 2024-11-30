@@ -3,17 +3,18 @@ from django_q.tasks import async_task
 from django_q.models import Task
 from django.db.models import F
 from .models import TestRun, LLMModel, Profile
-from .tasks.llm_tasks import execute_llm_test
 from .llms.tests.registry import test_registry
 
-def initiate_test_run(target: str, profile: Profile | None = None) -> TestRun:
+def initiate_test_run(product: str, product_category: str, product_description: str, profile: Profile | None = None) -> TestRun:
     """Creates a new test run and queues the testing process."""
     active_models = LLMModel.objects.filter(is_active=True)
 
     with transaction.atomic():
         test_run = TestRun.objects.create(
             profile=profile,
-            domain_or_product=target,
+            product=product,
+            product_category=product_category,
+            product_description=product_description,
             status=TestRun.Status.IN_PROGRESS,
             total_tests=0
         )
@@ -27,15 +28,20 @@ def initiate_test_run(target: str, profile: Profile | None = None) -> TestRun:
         test_run.total_tests = total_tests
         test_run.save()
 
-    # Queue each LLM test independently
+    # Spawn individual test tasks directly for each model
     for model in active_models:
-        task_name = f"llm_test_{test_run.id}_{model.id}"
-        async_task(
-            execute_llm_test,
-            test_run.id,
-            model.id,
-            task_name=task_name
-        )
+        available_test_classes = test_registry.get_available_tests(model)
+        for test_class in available_test_classes:
+            test_name = test_class.test_name()
+            task_name = f"test_{test_run.id}_{model.id}_{test_name}"
+            async_task(
+                'core.tasks.llm_tasks.run_test',
+                test_run.id,
+                model.id,
+                test_name,
+                task_name=task_name,
+                hook='core.tasks.llm_tasks.test_complete'
+            )
 
     return test_run
 
